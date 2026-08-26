@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>guia-supabase / README.md</title>
+<style>
+  :root{
+    --bg-canvas:#0d1117;
+    --bg-subtle:#161b22;
+    --bg-inset:#010409;
+    --border-default:#30363d;
+    --border-muted:#21262d;
+    --fg-default:#e6edf3;
+    --fg-muted:#8b949e;
+    --fg-subtle:#6e7681;
+    --accent-fg:#58a6ff;
+    --accent-emphasis:#1f6feb;
+    --success-fg:#3fb950;
+    --success-emphasis:#238636;
+    --success-emphasis-hover:#2ea043;
+    --danger-fg:#f85149;
+    --danger-emphasis:#da3633;
+    --attention-fg:#d29922;
+    --attention-emphasis:#9e6a03;
+    --done-fg:#a371f7;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+
+  body{
+    margin:0;
+    background:var(--bg-canvas);
+    color:var(--fg-default);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.6;
+  }
+
+  a{color:var(--accent-fg); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  a:focus-visible, button:focus-visible, summary:focus-visible{
+    outline:2px solid var(--accent-fg);
+    outline-offset:2px;
+    border-radius:4px;
+  }
+
+  code, .code{
+    font-family:var(--mono);
+    font-size:0.85em;
+    background:rgba(110,118,129,0.2);
+    padding:0.2em 0.45em;
+    border-radius:6px;
+    color:#e6edf3;
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    background:var(--bg-subtle);
+    border-bottom:1px solid var(--border-default);
+    padding:12px 24px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .topbar .octo{width:28px;height:28px;fill:var(--fg-default);flex-shrink:0;}
+  .topbar .crumbs{font-size:15px; color:var(--fg-muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+  .topbar .crumbs b{color:var(--fg-default); font-weight:600;}
+  .topbar .crumbs .slash{color:var(--fg-subtle);}
+
+  .topbar .badges{margin-left:auto; display:flex; gap:8px;}
+  .pill-btn{
+    display:flex; align-items:center; gap:6px;
+    background:var(--bg-inset);
+    border:1px solid var(--border-default);
+    color:var(--fg-default);
+    padding:5px 12px;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:600;
+    cursor:default;
+  }
+  .pill-btn svg{width:14px;height:14px;fill:var(--fg-muted);}
+
+  /* ---------- repo header ---------- */
+  .repo-header{
+    max-width:900px;
+    margin:0 auto;
+    padding:28px 24px 0;
+  }
+  .repo-title{
+    font-size:22px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .repo-title .lock{width:16px;height:16px;fill:var(--fg-muted);}
+  .repo-desc{color:var(--fg-muted); margin-top:6px; font-size:15px;}
+
+  .tabs{
+    display:flex;
+    gap:2px;
+    margin-top:20px;
+    border-bottom:1px solid var(--border-default);
+    overflow-x:auto;
+  }
+  .tab{
+    padding:10px 16px;
+    font-size:14px;
+    color:var(--fg-muted);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    border-bottom:2px solid transparent;
+    white-space:nowrap;
+  }
+  .tab svg{width:16px;height:16px;fill:var(--fg-muted);}
+  .tab.active{
+    color:var(--fg-default);
+    border-bottom-color:#f78166;
+    font-weight:600;
+  }
+  .tab.active svg{fill:var(--fg-default);}
+
+  /* ---------- file view ---------- */
+  .container{max-width:900px; margin:0 auto; padding:20px 24px 80px;}
+
+  .file-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--bg-subtle);
+    border:1px solid var(--border-default);
+    border-bottom:none;
+    border-radius:6px 6px 0 0;
+    padding:12px 16px;
+    font-size:14px;
+    color:var(--fg-muted);
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .file-header .fname{display:flex; align-items:center; gap:8px; color:var(--fg-default);}
+  .file-header svg{width:16px;height:16px;fill:var(--fg-muted);}
+
+  .readme{
+    border:1px solid var(--border-default);
+    border-radius:0 0 6px 6px;
+    padding:40px;
+    background:var(--bg-canvas);
+  }
+
+  .readme h1{
+    font-size:30px;
+    font-weight:700;
+    border-bottom:1px solid var(--border-muted);
+    padding-bottom:12px;
+    margin:0 0 8px;
+  }
+  .readme .lead{
+    color:var(--fg-muted);
+    font-size:16px;
+    margin:0 0 32px;
+  }
+
+  /* progress timeline (signature element) */
+  .timeline{
+    list-style:none;
+    margin:0 0 44px;
+    padding:0;
+    position:relative;
+  }
+  .timeline::before{
+    content:"";
+    position:absolute;
+    left:15px;
+    top:6px;
+    bottom:6px;
+    width:2px;
+    background:var(--border-default);
+  }
+  .timeline li{
+    position:relative;
+    padding:0 0 22px 46px;
+  }
+  .timeline li:last-child{padding-bottom:0;}
+  .timeline .dot{
+    position:absolute;
+    left:0; top:2px;
+    width:32px; height:32px;
+    border-radius:50%;
+    background:var(--bg-subtle);
+    border:2px solid var(--success-emphasis);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:13px;
+    color:var(--success-fg);
+  }
+  .timeline .dot.security{border-color:var(--attention-emphasis); color:var(--attention-fg);}
+  .timeline a.step-link{font-size:14.5px; font-weight:600; color:var(--fg-default);}
+  .timeline a.step-link:hover{color:var(--accent-fg);}
+  .timeline .step-sub{display:block; font-size:13px; color:var(--fg-subtle); margin-top:2px;}
+
+  section.step{
+    margin:0 0 48px;
+    scroll-margin-top:20px;
+  }
+  section.step h2{
+    font-size:22px;
+    font-weight:600;
+    border-bottom:1px solid var(--border-muted);
+    padding-bottom:8px;
+    margin:0 0 16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  section.step h2 .num{
+    font-family:var(--mono);
+    font-size:13px;
+    font-weight:700;
+    color:var(--bg-canvas);
+    background:var(--success-fg);
+    width:24px;height:24px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  section.step p{margin:0 0 12px; color:var(--fg-default);}
+
+  ul.checklist{
+    list-style:none;
+    margin:0 0 16px;
+    padding:0;
+  }
+  ul.checklist li{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:6px 0;
+    color:var(--fg-default);
+  }
+  ul.checklist li svg{
+    width:18px;height:18px;
+    fill:var(--success-fg);
+    flex-shrink:0;
+    margin-top:2px;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:0 0 20px;
+    font-size:14px;
+    border:1px solid var(--border-default);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  thead{background:var(--bg-subtle);}
+  th, td{
+    padding:10px 14px;
+    border:1px solid var(--border-default);
+    text-align:left;
+  }
+  th{font-weight:600; color:var(--fg-default);}
+  td{color:var(--fg-muted);}
+  tbody tr:hover{background:rgba(177,186,196,0.06);}
+
+  /* github-style markdown alert callouts */
+  .alert{
+    border-left:4px solid var(--accent-fg);
+    background:rgba(56,139,253,0.1);
+    padding:12px 16px;
+    border-radius:6px;
+    margin:0 0 20px;
+  }
+  .alert .alert-title{
+    display:flex; align-items:center; gap:6px;
+    font-weight:700; font-size:13px;
+    margin-bottom:6px;
+  }
+  .alert p{margin:0; font-size:14px;}
+  .alert svg{width:16px;height:16px;}
+
+  .alert.note{border-left-color:var(--accent-fg);}
+  .alert.note .alert-title{color:var(--accent-fg);}
+  .alert.note svg{fill:var(--accent-fg);}
+
+  .alert.warning{border-left-color:var(--attention-fg); background:rgba(210,153,34,0.1);}
+  .alert.warning .alert-title{color:var(--attention-fg);}
+  .alert.warning svg{fill:var(--attention-fg);}
+
+  .alert.danger{border-left-color:var(--danger-fg); background:rgba(248,81,73,0.1);}
+  .alert.danger .alert-title{color:var(--danger-fg);}
+  .alert.danger svg{fill:var(--danger-fg);}
+
+  /* final commit-style success footer */
+  .commit-footer{
+    margin-top:12px;
+    border:1px solid var(--border-default);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .commit-footer .head{
+    background:var(--bg-subtle);
+    padding:12px 16px;
+    display:flex; align-items:center; gap:10px;
+    font-size:14px;
+    color:var(--fg-default);
+    font-weight:600;
+    border-bottom:1px solid var(--border-default);
+  }
+  .commit-footer .head svg{width:16px;height:16px; fill:var(--success-fg);}
+  .commit-row{
+    padding:10px 16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:13.5px;
+    color:var(--fg-muted);
+    border-bottom:1px solid var(--border-muted);
+    font-family:var(--mono);
+  }
+  .commit-row:last-child{border-bottom:none;}
+  .commit-row .hash{color:var(--done-fg);}
+  .commit-row .msg{color:var(--fg-default); font-family:var(--sans);}
+
+  footer.page-footer{
+    max-width:900px;
+    margin:32px auto 0;
+    padding:20px 24px 40px;
+    color:var(--fg-subtle);
+    font-size:12.5px;
+    text-align:center;
+    border-top:1px solid var(--border-muted);
+  }
+
+  @media (max-width:640px){
+    .readme{padding:24px 18px;}
+    .repo-title{font-size:19px;}
+    .topbar{padding:10px 16px;}
+    section.step h2{font-size:19px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <svg class="octo" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+      0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58
+      1.32.82.77.13 1.6-.32 1.95-.72-.03-.25-.13-.42-.2-.53-.4-.5-.2-.98-.02-1.14.44-.35.98-.1 1.36-.32.7-.4 1.4-.7 1.4-1.6
+      0-.4-.14-.72-.37-1 .04-.1.16-.5-.04-1.03 0 0-.34-.11-1.1.42-.32-.09-.66-.13-1-.13-.34 0-.68.04-1 .13-.76-.53-1.1-.42-1.1-.42
+      -.2.53-.08.93-.04 1.03-.23.28-.37.6-.37 1 0 .9.7 1.2 1.4 1.6.38.22.92-.03 1.36.32.18.16.38.64-.02 1.14-.07.11-.17.28-.2.53
+      .35.4 1.18.85 1.95.72.24-.24.69-.83 1.32-.82.67.01.27.38-.01.53-.34.19-.73.9-.82 1.13-.16.45-.68 1.31-2.69.94
+      0 .67-.01 1.3-.01 1.49 0 .21.15.45.55.38C13.71 14.53 16 11.54 16 8c0-4.42-3.58-8-8-8z"/></svg>
+    <div class="crumbs"><b>voce</b><span class="slash">/</span><b>guia-supabase</b><span class="slash">·</span>Público</div>
+    <div class="badges">
+      <div class="pill-btn"><svg viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>Star</div>
+      <div class="pill-btn"><svg viewBox="0 0 16 16"><path d="M5 3.25a2.25 2.25 0 114.5 0v.5a2.25 2.25 0 11-1.5 2.122v3.256a2.251 2.251 0 11-1.5 0V5.872A2.25 2.25 0 015 3.25z"/></svg>Fork</div>
+    </div>
+  </div>
+
+  <div class="repo-header">
+    <div class="repo-title">
+      <svg class="lock" viewBox="0 0 16 16"><path d="M4 4a4 4 0 118 0v2h.25A1.75 1.75 0 0114 7.75v5.5A1.75 1.75 0 0112.25 15h-8.5A1.75 1.75 0 012 13.25v-5.5A1.75 1.75 0 013.75 6H4V4zm8.25 3.5h-8.5a.25.25 0 00-.25.25v5.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25v-5.5a.25.25 0 00-.25-.25zM5.5 4v2h5V4a2.5 2.5 0 00-5 0z"/></svg>
+      guia-supabase
+    </div>
+    <div class="repo-desc">Passo a passo para criar sua conta, seu projeto e sua primeira tabela no Supabase.</div>
+
+    <div class="tabs">
+      <div class="tab active"><svg viewBox="0 0 16 16"><path d="M4.72 3.22a.75.75 0 011.06 1.06L2.06 8l3.72 3.72a.75.75 0 11-1.06 1.06L.47 8.53a.75.75 0 010-1.06zm6.56 0a.75.75 0 10-1.06 1.06L13.94 8l-3.72 3.72a.75.75 0 101.06 1.06l4.25-4.25a.75.75 0 000-1.06z"/></svg>Código</div>
+      <div class="tab"><svg viewBox="0 0 16 16"><path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/><path d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0z"/></svg>Issues</div>
+      <div class="tab"><svg viewBox="0 0 16 16"><path d="M1.5 3.25a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25z"/></svg>Pull requests</div>
+      <div class="tab"><svg viewBox="0 0 16 16"><path d="M8.75.75V2h.985c.304 0 .603.08.867.231l1.29.736c.038.022.08.033.124.033h2.234a.75.75 0 010 1.5h-.427l2.111 4.692a.75.75 0 01-.154.838l-.53-.53.529.531-.001.002-.002.002-.006.006-.006.005-.01.01-.045.04c-.21.176-.441.322-.686.435-.65.298-1.324.43-1.83.43-.506 0-1.18-.132-1.83-.43-.245-.113-.476-.259-.686-.435-.017-.014-.03-.026-.045-.04l-.01-.01-.006-.005-.006-.007-.002-.002-.001-.001-.53-.531a.75.75 0 01-.154-.838L12.484 4.5h-.427a2.25 2.25 0 01-1.291-.408l-1.29-.735a.25.25 0 00-.123-.033H8.75V13h2.5a.75.75 0 010 1.5h-6.5a.75.75 0 010-1.5h2.5V3.325h-.603a.25.25 0 00-.124.033l-1.29.735A2.25 2.25 0 013.943 4.5H3.516l2.11 4.692a.75.75 0 01-.153.838l-.53-.53.529.53-.001.002-.002.002-.006.007-.006.005-.01.01-.045.04c-.21.176-.441.322-.686.435-.65.298-1.324.43-1.83.43-.506 0-1.18-.132-1.83-.43a3.393 3.393 0 01-.686-.435l-.045-.04-.01-.01-.006-.005-.006-.007L0 10.06a.75.75 0 01-.154-.838L1.958 4.5H1.53a.75.75 0 010-1.5h2.235a.249.249 0 00.124-.033l1.29-.736c.264-.15.563-.231.866-.231h.986V.75a.75.75 0 011.5 0z"/></svg>Actions</div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="file-header">
+      <div class="fname">
+        <svg viewBox="0 0 16 16"><path d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16h-9.5A1.75 1.75 0 012 14.25V1.75zm1.75-.25a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 00.25-.25V6h-2.75A1.75 1.75 0 0110 4.25V1.5H3.75z"/></svg>
+        README.md
+      </div>
+      <span>5 seções · leitura de 3 min</span>
+    </div>
+
+    <article class="readme">
+      <h1>Configurando sua primeira conta, projeto e tabela</h1>
+      <p class="lead">Um guia rápido para sair do zero até ter um banco de dados funcionando no Supabase — da criação da conta às chaves de conexão do seu app.</p>
+
+      <ol class="timeline">
+        <li><div class="dot">1</div><a class="step-link" href="#passo-1">Criar uma conta</a><span class="step-sub">supabase.com → Start your project</span></li>
+        <li><div class="dot">2</div><a class="step-link" href="#passo-2">Criar um projeto</a><span class="step-sub">organização, senha do banco e região</span></li>
+        <li><div class="dot">3</div><a class="step-link" href="#passo-3">Criar uma tabela</a><span class="step-sub">Table Editor → New table</span></li>
+        <li><div class="dot security">4</div><a class="step-link" href="#passo-4">Configurar a segurança</a><span class="step-sub">RLS e policies</span></li>
+        <li><div class="dot">5</div><a class="step-link" href="#passo-5">Pegar os dados de conexão</a><span class="step-sub">URL da API e chaves</span></li>
+      </ol>
+
+      <section class="step" id="passo-1">
+        <h2><span class="num">1</span>Criar uma conta</h2>
+        <ul class="checklist">
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Entre em <code>supabase.com</code>.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Clique em <code>Start your project</code>.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Cadastre-se usando GitHub, Google ou e-mail.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Confirme seu e-mail, caso seja solicitado.</li>
+        </ul>
+      </section>
+
+      <section class="step" id="passo-2">
+        <h2><span class="num">2</span>Criar um projeto</h2>
+        <ul class="checklist">
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>No painel, clique em <code>New project</code>.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Escolha ou crie uma organização.</li>
+        </ul>
+        <p>Preencha os campos:</p>
+        <table>
+          <thead><tr><th>Campo</th><th>O que colocar</th></tr></thead>
+          <tbody>
+            <tr><td><code>Name</code></td><td>Nome do projeto</td></tr>
+            <tr><td><code>Database Password</code></td><td>Uma senha forte</td></tr>
+            <tr><td><code>Region</code></td><td>A região mais próxima</td></tr>
+            <tr><td><code>Plan</code></td><td>Plano gratuito para começar</td></tr>
+          </tbody>
+        </table>
+        <ul class="checklist">
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Clique em <code>Create new project</code>.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Espere o Supabase preparar tudo.</li>
+        </ul>
+        <div class="alert warning">
+          <div class="alert-title"><svg viewBox="0 0 16 16"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575zM8 5a.75.75 0 01.75.75v2.5a.75.75 0 01-1.5 0v-2.5A.75.75 0 018 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg>ATENÇÃO</div>
+          <p>Guarde a senha do banco em um local seguro — ela não fica salva em nenhum outro lugar visível.</p>
+        </div>
+      </section>
+
+      <section class="step" id="passo-3">
+        <h2><span class="num">3</span>Criar uma tabela</h2>
+        <p>Uma tabela funciona como uma planilha.</p>
+        <ul class="checklist">
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Abra <code>Table Editor</code>.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Clique em <code>New table</code>.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Dê um nome simples, como <code>tarefas</code>.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Adicione uma coluna chamada <code>titulo</code>, do tipo <code>text</code>.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Mantenha a coluna <code>id</code>.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>Clique em <code>Save</code>.</li>
+        </ul>
+      </section>
+
+      <section class="step" id="passo-4">
+        <h2><span class="num">4</span>Configurar a segurança</h2>
+        <p>Ative o <strong>RLS</strong> (Row Level Security) na tabela. Ele funciona como um porteiro que decide quem pode ver ou mudar cada informação.</p>
+        <p>Depois, crie <em>policies</em>, que são as regras desse porteiro.</p>
+        <div class="alert danger">
+          <div class="alert-title"><svg viewBox="0 0 16 16"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575zM8 5a.75.75 0 01.75.75v2.5a.75.75 0 01-1.5 0v-2.5A.75.75 0 018 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg>IMPORTANTE</div>
+          <p>Sem essas regras, seu aplicativo pode não conseguir acessar os dados ou pode deixá-los expostos.</p>
+        </div>
+      </section>
+
+      <section class="step" id="passo-5">
+        <h2><span class="num">5</span>Pegar os dados de conexão</h2>
+        <p>No painel do projeto:</p>
+        <ul class="checklist">
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>A URL da API fica em <code>Integrations → Data API</code>.</li>
+          <li><svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>As chaves ficam em <code>Settings → API Keys</code>.</li>
+        </ul>
+        <div class="alert note">
+          <div class="alert-title"><svg viewBox="0 0 16 16"><path d="M0 8a8 8 0 1116 0A8 8 0 010 8zm8-6.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM6.92 6.085h.001a.749.749 0 11-1.342-.67c.169-.339.436-.638.849-.849.416-.213.933-.32 1.541-.244.62.077 1.096.395 1.353.849.257.454.311 1.024.077 1.617-.164.416-.462.72-.75.984-.29.264-.617.499-.803.677-.213.203-.276.37-.276.55v.267a.75.75 0 01-1.5 0v-.267c0-.663.365-1.14.727-1.482.16-.152.377-.324.575-.482.297-.235.523-.44.598-.61.077-.194.043-.352-.018-.457-.086-.148-.264-.264-.577-.302-.377-.047-.626.014-.775.09-.146.075-.234.174-.28.328zM8 11a.75.75 0 01.75.75v.008a.75.75 0 01-1.5 0v-.008A.75.75 0 018 11z"/></svg>NOTA</div>
+          <p>Use a chave pública, como a <code>publishable key</code> ou a chave legada <code>anon</code>, no aplicativo.</p>
+        </div>
+        <div class="alert danger">
+          <div class="alert-title"><svg viewBox="0 0 16 16"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575zM8 5a.75.75 0 01.75.75v2.5a.75.75 0 01-1.5 0v-2.5A.75.75 0 018 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg>PERIGO</div>
+          <p>Nunca coloque <code>service_role</code> ou uma <code>secret key</code> em código público — elas têm poderes administrativos.</p>
+        </div>
+      </section>
+
+      <div class="commit-footer">
+        <div class="head">
+          <svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>
+          Pronto! Sua conta, seu projeto e sua primeira tabela estão configurados.
+        </div>
+        <div class="commit-row"><span class="hash">a1b2c3d</span><span class="msg">conta criada em supabase.com</span></div>
+        <div class="commit-row"><span class="hash">e4f5g6h</span><span class="msg">projeto e senha do banco configurados</span></div>
+        <div class="commit-row"><span class="hash">i7j8k9l</span><span class="msg">tabela "tarefas" criada com colunas id e titulo</span></div>
+        <div class="commit-row"><span class="hash">m0n1o2p</span><span class="msg">RLS ativado + policies definidas</span></div>
+        <div class="commit-row"><span class="hash">q3r4s5t</span><span class="msg">URL e chave pública prontas para uso</span></div>
+      </div>
+
+    </article>
+  </div>
+
+  <footer class="page-footer">
+    Guia baseado na documentação oficial do Supabase — supabase.com
+  </footer>
+
+</body>
+</html>
